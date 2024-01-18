@@ -1,3 +1,3 @@
-# Repo structure and public repos
+# Repo Structure and Public Repos
 
 TODO

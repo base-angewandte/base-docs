@@ -1,4 +1,4 @@
-Welcome to base Angewandte's documentation!
+Welcome to base Angewandte's Documentation!
 ===========================================
 
 This is the entry point for the documentation of all our applications. While every app has its own specific docs,

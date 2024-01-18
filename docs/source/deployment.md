@@ -1,3 +1,3 @@
-# Deployment of base applications
+# Deployment of base Applications
 
 TODO
