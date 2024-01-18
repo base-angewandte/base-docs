@@ -33,6 +33,7 @@ author = 'base Dev Team'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosectionlabel',
     'myst_parser',
     'sphinx_copybutton',
     'sphinx_togglebutton',
