@@ -5,6 +5,24 @@ different things you need to take care of. While the [](./local_dev_setup.md) is
 the following notes will focus on what is needed to get our applications running on a publicly reachable server,
 either for testing purposes or to run in production.
 
+## System requirements
+
+The specific dimensions of any machine you will run base applications on, depends of course on the specific user case.
+For an internal single server setup in a test scenario the following specifications worked quite well in our tests
+(we usually run everything on virtualized nodes, but you could also go for a dedicated host system):
+
+- 4 CPU cores
+- 8 GB RAM
+- 50 GB disk
+- 50 GB NFS share
+
+Although for a local test system even a virtual machine with 2 cores, 2 GB RAM, and 20 GB hard disk worked well.
+
+The final disk space depends mostly on how much media your users will upload. And in case of heavy loads, the first
+component to factor out to a separate machine should be Portfolio, as it will handle all media conversions.
+
+## System setup
+
 The minimal setup needed, is a fresh Linux system, with [Docker](https://docs.docker.com/get-docker/) installed, and the `make` command available.
 While in theory, this should run on any major Linux distribution, we suggest using [Debian](https://www.debian.org/),
 or a Debian-based distro like [Ubuntu](https://ubuntu.com/). We usually test our applications only on Debian and Ubuntu.
