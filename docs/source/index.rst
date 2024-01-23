@@ -28,6 +28,7 @@ projects work together, check out the remaining sections here.
    deployment
    repositories
    api_principles
+   skos_vocabularies
    local_dev_setup
    dev_guide
    tools
