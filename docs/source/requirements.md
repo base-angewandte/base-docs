@@ -33,12 +33,20 @@ In any case we suggest to do the following on any server running any (parts) of 
   ```
 
 To decide which path to take from here, a requirement is to understand how our different applications work together.
-The following diagramme should help to explain this based on a single-server setup:
+The following diagram should help to explain this based on a single-server setup:
 
-TODO: add diagramme
+![Single-Server-Setup for Portfolio and Showroom](_static/single-server-architecture.drawio.png)
+(full-size image: [](_static/single-server-architecture.drawio.png)
+drawio source: [](_static/single-server-architecture.drawio))
 
-In case of a multi-server setup, you can decide to take some parts, e.g. the Portfolio frontend and backend, to be
-hosted on a dedicated machine, similar to the Showroom frontend and backend, while keeping Baseauth on your main
+All the single components shown inside the server block run on separate Docker containers, except for those frontend
+parts that can be built to static sources once, which are then hosted directly by nginx. But also the building of these
+static sources is done with a container. There are even some more containers in the final setup, which are not
+explicitly shown here (e.g. the django job queue workers in Portfolio and Showroom), but they should be considered
+an integral part of the respective backend component.
+
+In case of a multi-server-setup, you can decide to take some parts, e.g. the _Portfolio_ frontend and backend, to be
+hosted on a dedicated machine, similar to the _Showroom_ frontend and backend, while keeping _Baseauth_ on your main
 machine serving as an entry point. In this case you will nevertheless need the _nginx_ component on every machine,
-as it serves as the reverse proxy distribution incoming HTTP requests to either frontends or backends of each
-application.
+because it serves as the reverse proxy, distributing incoming HTTP requests to the respective containers providing
+either frontend or backend services - as the containers themselves are not (and should not be) publicly accessible.
