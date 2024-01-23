@@ -14,7 +14,7 @@ The specific requirement and setup then depends on whether you want to:
 - go for a single-server setup, where one machine is running all applications
 - or a multi-server setup, where different machines host different (parts) of our applications
 
-In any case we suggest to do the following on any server running any (parts) of our applications:
+In any case you need to do the following on any server running any (parts) of our applications:
 
 - install the [Docker Engine](https://docs.docker.com/engine/install/) for your specific distro
 - install the `make` command (e.g. with `sudo apt install make`).
@@ -31,6 +31,12 @@ In any case we suggest to do the following on any server running any (parts) of 
   echo 'docker compose "$@"' | sudo tee /usr/local/bin/docker-compose
   sudo chmod +x /usr/local/bin/docker-compose
   ```
+- create a user `base` that is allowed to execute with `sudo`, e.g. by doing:
+  ```bash
+  sudo adduser base
+  sudo usermod -a -G sudo base
+  ```
+- create a folder `/opt/base` belonging to the `base` user.
 
 To decide which path to take from here, a requirement is to understand how our different applications work together.
 The following diagram should help to explain this based on a single-server setup:
