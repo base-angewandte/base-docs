@@ -37,6 +37,16 @@ In any case you need to do the following on any server running any (parts) of ou
   sudo usermod -a -G sudo base
   ```
 - create a folder `/opt/base` belonging to the `base` user.
+- make sure the server's IP address can be reached publicly, and HTTP & HTTPS traffic to and from it is allowed.
+  ```{warning}
+  This is necessary even for an internal test server, in order for Let's Encrypt to be able
+  to create the SSL certificates. We strongly recommend to not run any service unencrypted on any server,
+  even if it is in your internal network. You can do that with the [](./local_dev_setup.md).
+  If you nevertheless want to do that and not use Let's Encrypt certificates, you will have to do quite some tweaking,
+  which we are unable to document in a very generic way, because it will depend a lot on your local circumstances.
+  You can contact us, and we are happy to point you to where to start tweaking, but basically you are on your own,
+  if you want to go down that road.
+  ```
 
 To decide which path to take from here, a requirement is to understand how our different applications work together.
 The following diagram should help to explain this based on a single-server setup:
