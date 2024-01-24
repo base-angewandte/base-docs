@@ -41,4 +41,106 @@ they are hosting.
 
 In this section we'll walk you through a setup of Portfolio and Showroom on a single machine.
 
-TODO
+For this scenario we will use a machine `base-preview`, which is publicly accessible at base-preview.uni-ak.ac.at.
+So wherever any of these are mentioned in the procedure below, you will have to replace it with your machines
+name/DNS entry.
+
+Following the above-mentioned general procedure, we will start with
+[baseauth](https://github.com/base-angewandte/baseauth) fist. So we'll clone the repo first.
+
+```bash
+cd /opt/base
+sudo -u base git clone https://github.com/base-angewandte/baseauth.git
+```
+
+Following "Production" section of the
+[install section of the baseauth docs](https://github.com/base-angewandte/baseauth/blob/main/docs/source/install.md),
+we create the _.env_ and _src/baseauth/.env_ files and adapt the values according to the
+[configuration section of the baseauth docs](https://github.com/base-angewandte/baseauth/blob/main/docs/source/configuration.md).
+If we did everything right, the only thing left to do is to start the services with
+`sudo make start init restart-gunicorn`. That's it, we are done with our first service.
+
+If you want to check if baseauth is really up and running to expectations, you can do the following:
+
+```bash
+# check if all containers are up and running
+sudo docker ps
+# this should show you at least for baseauth-* containers where the STATUS is "Up [... for some time ...]"
+# for the baseauth-django container you should also see, that it has the port 8000/tcp opened.
+```
+
+You can even try to do a request to the Django service:
+
+```bash
+# let's find out the container's IP address
+docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' baseauth-django
+# and check whether the HTTP server is responding
+curl 172.18.0.2:8000  # replace with the IP your got from the last command
+# this should return a 400 Bad Request response, as per default baseauth will only allow
+# requests directed to base-preview.uni-ak.ac.at. check the logs/application.log for details.
+```
+
+So, if you "successfully" get back this 400 Bad Request response, at the current stage everything should be fine.
+If you want to dig deeper, you will need to adapt the _src/baseauth/.env_ settings to allow for another hostname.
+Or wait, until we've set up everything and nginx is running, then we can send requests to the proper URI.
+
+While the install section now says to continue with _nginx_ (assuming baseauth is the only service to be set up
+on the machine), we will now continue with the other services, to set up nginx at the end.
+
+Let's check out the [portfolio-backend](https://github.com/base-angewandte/portfolio-backend):
+
+```bash
+cd /opt/base
+sudo -u base git clone https://github.com/base-angewandte/portfolio-backend.git
+```
+
+Now we can follow its [Installation Guide](https://portfolio-backend.readthedocs.io/en/latest/install.html).
+The procedure will be quite similar to baseauth: 1) create the _.env_ files and adapt the values 2) start the service.
+Only in case of Portfolio the settings become a bit more complex, so you might want to take a closer look at the
+[Configuration](https://portfolio-backend.readthedocs.io/en/latest/configuration.html) section of the docs.
+But for a minimal first setup (with Showroom not yet activated), we should be fine with only adopting the
+`PORTFOLIO_DB_PASSWORD` in _.env_ and the `SITE_URL` in the _src/portfolio/.env_ file.
+
+So let's spin up the services with `sudo make start init restart-gunicorn`.
+
+Similar to baseauth you can check for the container status with `docker ps`. If everything is up and running,
+we can continue to set up [portfolio-frontend](https://github.com/base-angewandte/portfolio-frontend):
+
+```bash
+cd /opt/base
+sudo -u base git clone https://github.com/base-angewandte/portfolio-frontend.git
+```
+
+Following its setup and project and production setup notes, we copy the _.env_ file to _.env.local_ and adapt
+the values as needed. At least the `VUE_APP_BACKEND_BASE_URL` needs to be changed to the URL of our new machine.
+The `VUE_APP_HEADER_URL_TERMS` and `VUE_APP_HEADER_URL_NOTICE` can be set to any URL that displays your
+_Terms of use_ and the _Site notice_. If you set these to an empty string, those links will not be shown in the
+frontend's footer.
+
+Once the settings are adapted, we can build the frontend with `sudo make build-app`. In this case we don't even
+need to check for running containers afterward, as the built code will be included statically by nginx.
+
+While we still want to set up Showroom, we now really want to make sure everything is up and running.
+So we'll now continue with the nginx setup. We can then later set up the Showroom components and reconfigure nginx,
+and activate Showroom in Portfolio too.
+
+Again, we'll first start by checking out the [nginx repo](https://github.com/base-angewandte/nginx):
+
+```bash
+cd /opt/base
+sudo -u base git clone https://github.com/base-angewandte/nginx.git
+```
+
+Following the deployment notes in the repo's readme, we create the `.env` file and adapt the values.
+This means usually just adopting the `BASE_HOSTNAME` to the hosts name (in this scenario `base-preview`),
+and to set the `LETSENCRYPT_EMAIL` as a contact for certificate-related issues.
+
+The main nginx configuration then happens in the _docker-compose.override.yml_ file, which we create from
+its skeleton version. Here we activate _baseauth_ and _Portfolio_ by uncommenting the corresponding environment
+directives. As we currently also only have Portfolio running, we can also adapt the `INDEX_REDIRECT` to `/portfolio`.
+
+It is now time create the Let's Encrypt certificates with `sudo make start` and then
+start up nginx with `sudo make start`.
+
+If everything is up and running (check with `sudo docker ps`), we now are able to access our new installation at
+https://base-preview.uni-ak.ac.at.
