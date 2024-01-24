@@ -63,13 +63,16 @@ Every repository should contain a _Makefile_ which contains at least the followi
 include .env
 export
 
-PROJECT_NAME ?= showroom
+# change this to the new project's name
+# this will be used in config/base.mk, so check there if unsure how to name it
+# for existing projects we e.g. use "baseauth", "portfolio", "showroom", or "nginx"
+PROJECT_NAME ?= project-name
 
 include config/base.mk
 
 ## add project specific targets below like in the example placeholder
 .PHONY: placeholder
-cleanup:  ## placeholder for demo purposes
+placeholder:  ## placeholder for demo purposes
     echo "This is just a placeholder for demo purposes"
 ```
 
