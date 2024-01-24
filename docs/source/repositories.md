@@ -27,6 +27,14 @@ what the different repos are used for:
   [showroom-frontend](https://github.com/base-angewandte/showroom-frontend): contains backend and frontend for the
   _Showroom_ application, to showcase the (scientific) portfolios, users have entered (and published) on _Portfolio_.
 
+## Project/Repo specific documentation
+
+When you visit the repositories, they will provide either a _README&period;md_ with setup instructions (in case of
+our frontends), or a _docs/_ folder similar to this documentation. Some of these are already rendered on readthedocs.io:
+
+- https://portfolio-backend.readthedocs.io
+- https://showroom-backend.readthedocs.io
+
 ## General backend repo structure
 
 - The **config** directory contains our common base setup for linting, pre-commit hooks, and make commands. It is
