@@ -166,5 +166,26 @@ an error like "_yaml: line 2: did not find expected key_" will be produced, once
 It is now time create the Let's Encrypt certificates with `sudo make init` and then
 start up nginx with `sudo make start`.
 
+### Step 5: create admin user
+
 If everything is up and running (check with `sudo docker ps`), we now are able to access our new installation at
 https://base-preview.uni-ak.ac.at.
+
+We will be redirected to the Portfolio frontend, and from there immediately to baseauth, as Portfolio
+only allows access by authenticated users. So far we have not a single account. So let's create a first superuser
+account on baseauth, which will then be able to add more user accounts.
+
+```bash
+cd /opt/base/baseauth
+sudo docker-compose exec baseauth-django python manage.py createsuperuser
+```
+
+We will also need to reconfigure the _src/baseauth/.env_ file for the `DJANGO_SUPERUSERS`. If you before created an
+account with the username _admin_, then set it to `DJANGO_SUPERUSERS=(admin)`. Afterwards restart the Django service
+with `sudo make restart-gunicorn`.
+
+You can now use this account right away to create entries in portfolio. If you want to manage the user accounts of
+baseauth, you need to go to its Django admin interface, by adding _/admin/_ to the base url of baseauth. In this
+scenario this would be: https://base-preview.uni-ak.ac.at/auth/admin/.
+
+That's it for now. This walkthrough will be extended by sections on how to add Showroom within the next few weeks.
