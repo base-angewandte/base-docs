@@ -48,6 +48,9 @@ Configuring external authentication backends like LDAP, CAS, or Shibboleth is hi
 so we will try to handle this in separate tutorials in the future. You can always start out with the default,
 and later add or switch to your organisation's authentication backend.
 
+If you prefer a video walkthrough, there is a screencast based on this scenario:
+[Screencast: base Portfolio Single Server Setup](https://base.uni-ak.ac.at/cloud/index.php/s/3K4rWxJYwCJy653)
+
 ### Step 1: baseauth
 
 Following the above-mentioned general procedure, we will start with
