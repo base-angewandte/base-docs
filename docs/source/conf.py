@@ -70,6 +70,7 @@ myst_enable_extensions = [
 ]
 
 primary_color = '#f44336'
+primary_color_dark_style = '#ff867c'
 
 html_theme_options = {
     'light_logo': 'base-light.svg',
@@ -79,8 +80,8 @@ html_theme_options = {
         'color-brand-content': primary_color,
     },
     'dark_css_variables': {
-        'color-brand-primary': primary_color,
-        'color-brand-content': primary_color,
+        'color-brand-primary': primary_color_dark_style,
+        'color-brand-content': primary_color_dark_style,
     },
     'sidebar_hide_name': True,
     'navigation_with_keys': True,
