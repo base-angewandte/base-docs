@@ -44,11 +44,17 @@ The corresponding backend code can be found in Portfolio's [`src/api/views.py` m
 
 In new projects, our APIs need to be versioned and therefor always have a prefix of `/api/v{major}/`.
 
+## API consumption
+
+- Base frontend projects currently use [axios](https://github.com/axios/axios)
+- (**optional**) additionally currently API consumption in Frontend is built around [swagger-client](https://www.npmjs.com/package/swagger-client)
+- (**optional**) To be able to test the front end without backend a mock API server is implemented with [Express](https://expressjs.com/) (and optional [openapi-backend](https://github.com/anttiviljami/openapi-backend))
+
 ## X-Attributes
 
 In oder to add information to the OpenAPI schema that is not covered by standard OpenAPI specification we use [OpenAPI Extensions](https://swagger.io/docs/specification/openapi-extensions/) or more specifically a custom property `x-attrs`. Mainly the information covered in the `x-attrs` property is used to build forms in front end.
 
-## Use of X-Attributes for Frontend (Form Creation)
+### Use of X-Attributes for Frontend (Form Creation)
 
 The creation of forms via [available components](https://base-angewandte.github.io/base-ui-components/), namely [BaseForm](https://base-angewandte.github.io/base-ui-components/#baseform) and [BaseFormFieldCreator](https://base-angewandte.github.io/base-ui-components/#baseformfieldcreator) relies on x-attributes within the OpenAPI specification.
 
@@ -83,9 +89,3 @@ The creation of forms via [available components](https://base-angewandte.github.
 An example can be found in the [BaseForm](https://base-angewandte.github.io/base-ui-components/#baseform) section of the styleguide with "view code".
 
 Also these custom attributes can be extended with functionality needed for the front end - an example how x-attrs are put to use with the standard attributes used above and custom front end (in this case: portfolio) specific attributes (e.g. `prefetch`, `default_role`, `form_group`, …) can be found under [Form customization in Portfolio](https://github.com/base-angewandte/portfolio-backend/blob/master/docs/source/create_forms.md).
-
-## API consumption
-
-- Base frontend projects currently use [axios](https://github.com/axios/axios)
-- (**optional**) additionally currently API consumation in Frontend is built around [swagger-client](https://www.npmjs.com/package/swagger-client)
-- (**optional**) To be able to test the front end without backend a mock API server is implemented with [Express](https://expressjs.com/) (and optional [openapi-backend](https://github.com/anttiviljami/openapi-backend))
