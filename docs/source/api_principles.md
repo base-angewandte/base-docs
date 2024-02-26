@@ -12,6 +12,51 @@ All our APIs MUST be documented in an Open API format, they SHOULD use version 3
 
 Many of our backends are built with Django and the django-rest-framework. On top of that we use [drf-spectacular](https://github.com/tfranzel/drf-spectacular) (and we did use [drf-yasg](https://github.com/axnsan12/drf-yasg) before that) to auto-generate an Open API compatible description of the APIs between backend and frontend.
 
+## `/autocomplete` endpoint
+
+If base backend applications provide an autocomplete feature, they SHOULD provide it through an `/autocomplete` endpoint.
+If they do, then this endpoint should use a `GET` request with at least the three following query parameters:
+
+- `q`: the query string, for which autocomplete suggestions should be returned
+- `type`: the category of items for which autocomplete suggestions should be returned - this depends on the application
+  data model, common examples are `users`, `titles`, `keywords`, or `locations`etc. The `type` parameter can either be
+  just one type, or a comma-separated list of several types. The output will differ accordingly (see below).
+- `limit`: an integer representing a limit to the number of returned results (within each requested `type`)
+
+The response of this endpoint SHOULD look like this:
+
+```json
+[
+  {
+    "id": "<type_id>",
+    "label": "<label_for_type>",
+    "data": [
+      {
+        "id": "<id or source>",
+        "source_name": "<optional: source_name>",
+        "label": "<translated label for this item>"
+      }
+    ]
+  }
+]
+```
+
+Here the outer list is the list of results for the different requested categories of items (requested with `type`),
+while the inner list represents the individual autocomplete suggestions.
+
+Only in those cases where a single `type` has been requested the response SHOULD change to what the `data` property in
+the above case would contain for the specific type:
+
+```json
+[
+  {
+    "id": "<id or source>",
+    "source_name": "<optional: source_name>",
+    "label": "<translated label for this item>"
+  }
+]
+```
+
 ## `/user` endpoint
 
 All base backend applications with functionality for authenticated users MUST provide a `/user` endpoint, through which an authenticated user's details can be retrieved.
@@ -39,6 +84,33 @@ The `/user` (and other relevant) endpoint(s) are protected with a combination of
 
 An example of how the `/user` endpoint works is https://base.uni-ak.ac.at/portfolio/api/v1/user/
 The corresponding backend code can be found in Portfolio's [`src/api/views.py` module in the `user_information` function](https://github.com/base-angewandte/portfolio-backend/blob/1.1.2/src/api/views.py#L279)
+
+## Authentication
+
+Our default authentication flow and mechanism is based on Django's session authentication and the CAS protocol. In
+practice every base application will use a `sessionid_<appname>` Cookie to identify the user to the app. Additionally
+for 'unsafe' HTTP operations (`POST`, `PUT`, `PATCH`, `DELETE`) require a CSRF token. For more background check the
+[Working with AJAX, CSRF & CORS](https://www.django-rest-framework.org/topics/ajax-csrf-cors/) page of the Django
+REST framework documentation.
+
+So, while any authenticated request against the API will need to provide a `sessionid_<appname>` cookie, any request
+that uses an 'unsafe' operation will additionally need a `csrftoken_<appname>` cookie, and also use this token as a
+value for an additional `X-CSRFToken` HTTP request header.
+
+In order to get the session cookie and the CSRF token, you need to follow the CAS-based login flow. Every time you log
+in, after all successful redirects you will not only receive the `sessionid_<appname>` cookie, but also the
+`csrftoken_<appname>` cookie. The default procedure for this authentication flow is:
+
+1. Make a `GET` request on `/accounts/login/` of the application you want to log in. This will return a 302 redirect.
+2. Redirect the client to the received CAS url, which includes all required parameters.
+3. The user can now log in at the configured CAS authentication backend - this will usually be _baseauth_.
+4. After successful log in, CAS will respond with a 302 redirect back to the `/accounts/login/` route of the calling
+   application, but with the authentication ticket as a parameter, and also setting the `sessionid_cas` and
+   `csrftoken_cas` cookies which are used to support the single-sign-on process over all base applications.
+5. Now the application uses the authentication ticket to verify against CAS, that the user has successfully logged in,
+   responds again with a 302 redirect to `/` or wherever the login redirect is configured to go to. In this redirect
+   the `sessionid_<appname>` and `csrftoken_<appname>` are set. So once your user is logged in, the frontend should
+   always be able to get those from the cookies, whenever an API request requires it.
 
 ## API namespace
 
