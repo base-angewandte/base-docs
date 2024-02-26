@@ -12,6 +12,51 @@ All our APIs MUST be documented in an Open API format, they SHOULD use version 3
 
 Many of our backends are built with Django and the django-rest-framework. On top of that we use [drf-spectacular](https://github.com/tfranzel/drf-spectacular) (and we did use [drf-yasg](https://github.com/axnsan12/drf-yasg) before that) to auto-generate an Open API compatible description of the APIs between backend and frontend.
 
+## `/autocomplete` endpoint
+
+If base backend applications provide an autocomplete feature, they SHOULD provide it through an `/autocomplete` endpoint.
+If they do, then this endpoint should use a `GET` request with at least the three following query parameters:
+
+- `q`: the query string, for which autocomplete suggestions should be returned
+- `type`: the category of items for which autocomplete suggestions should be returned - this depends on the application
+  data model, common examples are `users`, `titles`, `keywords`, or `locations`etc. The `type` parameter can either be
+  just one type, or a comma-separated list of several types. The output will differ accordingly (see below).
+- `limit`: an integer representing a limit to the number of returned results (within each requested `type`)
+
+The response of this endpoint SHOULD look like this:
+
+```json
+[
+  {
+    "id": "<type_id>",
+    "label": "<label_for_type>",
+    "data": [
+      {
+        "id": "<id or source>",
+        "source_name": "<optional: source_name>",
+        "label": "<translated label for this item>"
+      }
+    ]
+  }
+]
+```
+
+Here the outer list is the list of results for the different requested categories of items (requested with `type`),
+while the inner list represents the individual autocomplete suggestions.
+
+Only in those cases where a single `type` has been requested the response SHOULD change to what the `data` property in
+the above case would contain for the specific type:
+
+```json
+[
+  {
+    "id": "<id or source>",
+    "source_name": "<optional: source_name>",
+    "label": "<translated label for this item>"
+  }
+]
+```
+
 ## `/user` endpoint
 
 All base backend applications with functionality for authenticated users MUST provide a `/user` endpoint, through which an authenticated user's details can be retrieved.
