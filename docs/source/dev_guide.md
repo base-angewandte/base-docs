@@ -13,19 +13,33 @@ Follow the [PEP 8 Style Guide](https://www.python.org/dev/peps/pep-0008/) for Py
   4. Use lowercase for module names.
   5. Use CapWords convention for Class names.
 
-Use pre-commit with isort, black, flake8, …
+Use pre-commit with ruff, uv, …
 
 Configuration files can be found [here](https://github.com/base-angewandte/config) and included in a new project like this:
 
 ```bash
+# include config in project
 git subtree add --prefix config git@github.com:base-angewandte/config.git main --squash
 
-ln -s config/.flake8 .flake8
+# symlink the configuration files
+ln -s config/.cz.toml .cz.toml
 ln -s config/.hadolint.yaml .hadolint.yaml
-ln -s config/.isort.cfg .isort.cfg
 ln -s config/.pre-commit-config.yaml .pre-commit-config.yaml
-ln -s config/pyproject.toml pyproject.toml
+ln -s config/uv.toml uv.toml
 
+# if you are using the python version configured in config/.ruff.toml
+# you can just link it
+ln -s config/.ruff.toml .ruff.toml
+
+# otherwise you should extend from it
+cat <<EOT >> .ruff.toml
+extend = "config/.ruff.toml"
+
+src = ["src"]
+target-version = "<python version, e.g. py311>"
+EOT
+
+# create Makefile
 # change <project_name> to the name of the project
 cat <<EOT >> Makefile
 include .env
@@ -35,6 +49,9 @@ PROJECT_NAME ?= <project_name>
 
 include config/base.mk
 EOT
+
+# create gitignore
+make gitignore
 ```
 
 In case you need to adapt a certain config file, remove the symbolic link and copy the config file to use it as a template.
