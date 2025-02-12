@@ -9,7 +9,7 @@ This repo follows the same documentation structure as our applications do. So yo
 sources in the `./docs/` folder, where you can build it locally with [Sphinx](https://www.sphinx-doc.org/). See
 below for infos on how to build.
 
-The latest stable version of this documentation is also available on [TODO:readthedocslink](#)
+The latest stable version of this documentation is also available on [base-angewandte-docs.readthedocs.io](https://base-angewandte-docs.readthedocs.io)
 
 ## Building the docs
 
