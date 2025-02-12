@@ -1,0 +1,6 @@
+# compile this file with 'pip-compile requirements.in'
+furo
+myst-parser
+sphinx
+sphinx-copybutton
+sphinx-togglebutton
